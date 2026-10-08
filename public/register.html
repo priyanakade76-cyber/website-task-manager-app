@@ -154,7 +154,7 @@
       }
 
       try {
-        await API.auth.register(nameInput.value.trim(), emailInput.value.trim(), pwdInput.value);
+        await API.auth.register(nameInput.value.trim(), emailInput.value.trim(), pwdInput.value, selectedGradient);
         showToast('Registered', 'Your account is ready!', 'success');
         window.location.href = '/dashboard.html';
       } catch (err) {

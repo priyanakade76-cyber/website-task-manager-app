@@ -50,7 +50,19 @@ const API = {
 
     try {
       const response = await fetch(`${API_BASE}${endpoint}`, config);
-      const data = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      let data;
+
+      if (contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        const cleanMessage = text.replace(/<[^>]*>/g, '').trim().slice(0, 150);
+        if (!response.ok) {
+          throw new Error(cleanMessage || `Server returned error ${response.status}`);
+        }
+        data = { success: true, message: cleanMessage };
+      }
 
       if (!response.ok) {
         if (response.status === 401) {

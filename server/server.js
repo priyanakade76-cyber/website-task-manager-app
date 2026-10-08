@@ -14,6 +14,9 @@ const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
 
+// Trust reverse proxy (needed for Vercel rate limiting and secure headers)
+app.set('trust proxy', 1);
+
 // Initialize & verify Supabase PostgreSQL connection
 checkSupabaseConnection();
 
@@ -93,13 +96,16 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-const server = app.listen(PORT, () => {
-  console.log(`===============================================`);
-  console.log(`🚀 Task Manager Server running on port ${PORT}`);
-  console.log(`🌐 Web App: http://localhost:${PORT}`);
-  console.log(`📡 API Health: http://localhost:${PORT}/api/health`);
-  console.log(`===============================================`);
-});
+let server;
+if (!process.env.VERCEL) {
+  server = app.listen(PORT, () => {
+    console.log(`===============================================`);
+    console.log(`🚀 Task Manager Server running on port ${PORT}`);
+    console.log(`🌐 Web App: http://localhost:${PORT}`);
+    console.log(`📡 API Health: http://localhost:${PORT}/api/health`);
+    console.log(`===============================================`);
+  });
+}
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {

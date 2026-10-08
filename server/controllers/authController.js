@@ -7,7 +7,7 @@ const { formatUser } = require('../utils/formatters');
 const getSignedJwtToken = (user) => {
   return jwt.sign(
     { id: user.id, email: user.email, name: user.name },
-    process.env.JWT_SECRET || 'secret_jwt_key_task_manager',
+    process.env.JWT_SECRET || 'supersecretjwtkey_taskmanager_prod_2026_secured',
     { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
   );
 };
