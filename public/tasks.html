@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Manager & Kanban | TaskFlow</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/tasks.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="/dashboard.html" class="brand-logo">
+          <div class="brand-icon"><i class="fa-solid fa-bolt"></i></div>
+          <span>TaskFlow</span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-title">Menu</span>
+        <a href="/dashboard.html" class="nav-link">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="/tasks.html" class="nav-link active">
+          <i class="fa-solid fa-list-check"></i>
+          <span>Tasks & Kanban</span>
+        </a>
+        <a href="/calendar.html" class="nav-link">
+          <i class="fa-regular fa-calendar"></i>
+          <span>Calendar</span>
+        </a>
+        <a href="/profile.html" class="nav-link">
+          <i class="fa-solid fa-user-gear"></i>
+          <span>User Profile</span>
+        </a>
+
+        <span class="nav-section-title" style="margin-top: 14px;">Quick Views</span>
+        <a href="/tasks.html?status=Todo" class="nav-link">
+          <i class="fa-solid fa-circle-notch"></i>
+          <span>To Do</span>
+        </a>
+        <a href="/tasks.html?status=In Progress" class="nav-link">
+          <i class="fa-solid fa-spinner"></i>
+          <span>In Progress</span>
+        </a>
+        <a href="/tasks.html?status=Completed" class="nav-link">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Completed</span>
+        </a>
+        <a href="/tasks.html?dueDateFilter=overdue" class="nav-link">
+          <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
+          <span>Overdue Tasks</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-mini-card" onclick="window.location.href='/profile.html'">
+          <div class="user-avatar">U</div>
+          <div class="user-info">
+            <span class="user-name">Loading...</span>
+            <span class="user-email">user@taskflow.com</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <div class="main-wrapper">
+      
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn mobile-menu-toggle" id="btn-mobile-menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-input" id="tasks-search-input" placeholder="Search tasks by title, tags, description..." />
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn-primary" id="btn-create-task">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add Task</span>
+          </button>
+
+          <button class="btn-secondary" id="btn-open-category-modal">
+            <i class="fa-solid fa-folder-plus"></i>
+            <span>Categories</span>
+          </button>
+
+          <button class="icon-btn" id="btn-theme-toggle" title="Toggle Theme">
+            <i class="fa-solid fa-moon"></i>
+          </button>
+
+          <!-- Notifications Bell -->
+          <div style="position: relative;">
+            <button class="icon-btn" id="btn-notifications-bell" title="Notifications">
+              <i class="fa-regular fa-bell"></i>
+              <span class="badge-dot" id="notif-badge-dot" style="display: none;"></span>
+            </button>
+
+            <div class="notification-dropdown" id="notification-dropdown">
+              <div class="notification-header">
+                <div>
+                  <h4 style="font-size: 0.95rem; margin-bottom: 2px;">Notifications</h4>
+                  <span id="notif-unread-count" style="font-size: 0.75rem; color: var(--text-dim);">0 new</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn-secondary" id="btn-mark-all-read" style="padding: 4px 8px; font-size: 0.72rem;">Mark All</button>
+                  <button class="btn-secondary" id="btn-clear-all-notifs" style="padding: 4px 8px; font-size: 0.72rem;">Clear</button>
+                </div>
+              </div>
+              <div class="notification-list" id="notification-list"></div>
+            </div>
+          </div>
+
+          <!-- User Menu -->
+          <div style="position: relative;">
+            <div class="user-avatar" id="btn-user-menu" style="cursor: pointer; width: 38px; height: 38px;">U</div>
+            <div class="profile-dropdown" id="profile-dropdown">
+              <a href="/profile.html" class="dropdown-item">
+                <i class="fa-regular fa-user"></i> My Profile
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="#" class="dropdown-item" id="btn-logout" style="color: #ef4444;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="content-body">
+        
+        <!-- Filter and View Toolbar -->
+        <div class="tasks-toolbar">
+          <div class="toolbar-filters">
+            <!-- Status Filter -->
+            <div class="filter-item">
+              <select id="filter-status" class="filter-select">
+                <option value="All">All Statuses</option>
+                <option value="Todo">Todo</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+
+            <!-- Priority Filter -->
+            <div class="filter-item">
+              <select id="filter-priority" class="filter-select">
+                <option value="All">All Priorities</option>
+                <option value="Low">Low Priority</option>
+                <option value="Medium">Medium Priority</option>
+                <option value="High">High Priority</option>
+                <option value="Urgent">Urgent Priority</option>
+              </select>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="filter-item">
+              <select id="filter-category" class="filter-select">
+                <option value="All">All Categories</option>
+              </select>
+            </div>
+
+            <!-- Due Date Filter -->
+            <div class="filter-item">
+              <select id="filter-due-date" class="filter-select">
+                <option value="">Any Due Date</option>
+                <option value="today">Due Today</option>
+                <option value="week">Due This Week</option>
+                <option value="overdue">Overdue Only</option>
+                <option value="upcoming">Upcoming</option>
+              </select>
+            </div>
+
+            <!-- Sort By -->
+            <div class="filter-item">
+              <select id="filter-sort-by" class="filter-select">
+                <option value="createdAt">Newest First</option>
+                <option value="dueDate">Due Date</option>
+                <option value="priority">Priority</option>
+                <option value="title">Title (A-Z)</option>
+                <option value="updatedAt">Recently Updated</option>
+              </select>
+            </div>
+
+            <!-- Show Archived Toggle -->
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--text-muted); cursor: pointer; user-select: none;">
+              <input type="checkbox" id="toggle-show-archived" style="cursor: pointer;" />
+              <span>Show Archived</span>
+            </label>
+          </div>
+
+          <!-- View Mode Toggle (List vs Kanban) -->
+          <div class="toolbar-view-toggle">
+            <button class="view-btn active" id="btn-view-list">
+              <i class="fa-solid fa-list"></i> List
+            </button>
+            <button class="view-btn" id="btn-view-kanban">
+              <i class="fa-solid fa-table-columns"></i> Kanban
+            </button>
+          </div>
+        </div>
+
+        <!-- Task List View Container -->
+        <div class="task-list-view" id="container-task-list">
+          <div class="empty-state">
+            <div class="loading-spinner"></div>
+            <p class="empty-desc" style="margin-top: 14px;">Loading tasks...</p>
+          </div>
+        </div>
+
+        <!-- Kanban Board Container (Hidden by default, toggled via switcher) -->
+        <div class="kanban-board" id="container-kanban-board" style="display: none;"></div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Create / Edit Task Modal -->
+  <div class="modal-overlay" id="modal-task-form">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-task-form-title">Create New Task</h3>
+        <button class="modal-close" id="btn-close-task-modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="form-task">
+        <input type="hidden" id="task-edit-id" value="" />
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="task-title">Task Title *</label>
+            <input type="text" id="task-title" class="form-input" placeholder="e.g. Prepare Quarter 4 report" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="task-desc">Description</label>
+            <textarea id="task-desc" class="form-textarea" placeholder="Add detailed instructions, context, or checklist..."></textarea>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="form-group">
+              <label class="form-label" for="task-priority">Priority</label>
+              <select id="task-priority" class="form-select">
+                <option value="Low">Low</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="High">High</option>
+                <option value="Urgent">Urgent</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="task-category">Category</label>
+              <select id="task-category" class="form-select">
+                <option value="">General</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="form-group">
+              <label class="form-label" for="task-due-date">Due Date</label>
+              <input type="date" id="task-due-date" class="form-input" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="task-due-time">Due Time</label>
+              <input type="time" id="task-due-time" class="form-input" value="12:00" />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="form-group">
+              <label class="form-label" for="task-reminder-offset">Reminder Alert</label>
+              <select id="task-reminder-offset" class="form-select">
+                <option value="0">At time of due date</option>
+                <option value="15">15 minutes before</option>
+                <option value="30" selected>30 minutes before</option>
+                <option value="60">1 hour before</option>
+                <option value="1440">1 day before</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="task-estimated-time">Estimated Time (mins)</label>
+              <input type="number" id="task-estimated-time" class="form-input" placeholder="e.g. 60" min="0" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="task-tags">Tags (comma-separated)</label>
+            <input type="text" id="task-tags" class="form-input" placeholder="e.g. marketing, q4, client" />
+          </div>
+
+          <!-- Recurring Task Options -->
+          <div style="background: var(--bg-input); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-top: 10px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.88rem; cursor: pointer;">
+              <input type="checkbox" id="task-is-recurring" />
+              <span>Make this a recurring task</span>
+            </label>
+
+            <div id="recurring-options-block" style="display: none; margin-top: 12px;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div>
+                  <label class="form-label" for="task-recurring-freq">Frequency</label>
+                  <select id="task-recurring-freq" class="form-select">
+                    <option value="Daily">Daily</option>
+                    <option value="Weekly">Weekly</option>
+                    <option value="Monthly">Monthly</option>
+                    <option value="Custom">Custom Interval</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label" for="task-recurring-interval">Interval (days)</label>
+                  <input type="number" id="task-recurring-interval" class="form-input" value="1" min="1" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Task Details Modal (Notes & Timeline) -->
+  <div class="modal-overlay" id="modal-task-details">
+    <div class="modal-card" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Task Details</h3>
+        <button class="modal-close" id="btn-close-details-modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="task-details-header">
+          <div>
+            <h2 id="details-title" style="font-size: 1.35rem; margin-bottom: 8px;">Task Title</h2>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <span id="details-priority" class="badge">Medium</span>
+              <span id="details-category" class="badge">General</span>
+              <span id="details-status" class="badge">Todo</span>
+            </div>
+          </div>
+        </div>
+
+        <p id="details-desc" style="color: var(--text-muted); font-size: 0.92rem; margin-top: 16px; line-height: 1.5;"></p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; padding: 14px; background: var(--bg-input); border-radius: var(--radius-md);">
+          <div>
+            <span style="font-size: 0.75rem; color: var(--text-dim); display: block;">Due Date & Time</span>
+            <span id="details-due" style="font-size: 0.88rem; font-weight: 600;">None</span>
+          </div>
+          <div>
+            <span style="font-size: 0.75rem; color: var(--text-dim); display: block;">Total Time Logged</span>
+            <span id="details-time-tracked" style="font-size: 0.88rem; font-weight: 600; color: var(--accent-cyan);">0 mins</span>
+          </div>
+        </div>
+
+        <!-- Details Tabs (Notes & Activity Timeline) -->
+        <div class="task-details-tabs">
+          <div class="task-tab-btn active" id="tab-btn-notes">Notes</div>
+          <div class="task-tab-btn" id="tab-btn-activity">Activity History</div>
+        </div>
+
+        <!-- Notes Tab Content -->
+        <div id="tab-content-notes">
+          <div class="notes-list" id="notes-list-container"></div>
+          <form id="form-add-note" style="display: flex; gap: 8px;">
+            <input type="text" id="note-input-content" class="form-input" placeholder="Type a note and press enter..." required />
+            <button type="submit" class="btn-primary" style="padding: 0 16px;">Add</button>
+          </form>
+        </div>
+
+        <!-- Activity Timeline Tab Content -->
+        <div id="tab-content-activity" style="display: none;">
+          <div class="activity-timeline" id="activity-timeline-container"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manage Categories Modal -->
+  <div class="modal-overlay" id="modal-categories">
+    <div class="modal-card" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Manage Categories</h3>
+        <button class="modal-close" id="btn-close-category-modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="form-add-category" style="display: flex; gap: 10px; margin-bottom: 20px;">
+          <input type="text" id="category-name-input" class="form-input" placeholder="New Category Name..." required />
+          <input type="color" id="category-color-input" value="#6366f1" style="width: 50px; height: 42px; border: none; border-radius: var(--radius-sm); cursor: pointer; background: transparent;" />
+          <button type="submit" class="btn-primary" style="padding: 0 16px;">Add</button>
+        </form>
+
+        <h4 style="font-size: 0.85rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 10px;">Existing Categories</h4>
+        <div id="category-list-management" style="max-height: 280px; overflow-y: auto;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/tasks.js"></script>
+</body>
+</html>

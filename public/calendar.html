@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendar | TaskFlow</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+
+  <style>
+    .calendar-card {
+      padding: 24px;
+    }
+    .calendar-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .cal-nav-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .cal-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      min-width: 200px;
+    }
+    .calendar-header-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .calendar-days-matrix {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .calendar-days-matrix.week-view {
+      min-height: 400px;
+    }
+    .cal-day-cell {
+      min-height: 110px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .cal-day-cell:hover {
+      border-color: var(--primary);
+      background: var(--bg-card-hover);
+    }
+    .cal-day-cell.other-month {
+      opacity: 0.35;
+    }
+    .cal-day-cell.today {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+    .cal-cell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .cal-day-num {
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .cal-day-num.today-pill {
+      background: var(--primary);
+      color: #fff;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cal-task-count {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: var(--radius-full);
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .cal-tasks-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow-y: auto;
+      max-height: 80px;
+    }
+    .cal-task-pill {
+      background: var(--bg-input);
+      padding: 4px 6px;
+      border-radius: var(--radius-xs);
+      font-size: 0.74rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: all var(--transition-fast);
+    }
+    .cal-task-pill:hover {
+      transform: translateX(2px);
+      background: var(--bg-card-hover);
+    }
+    .cal-task-pill.overdue {
+      border-left-color: #ef4444 !important;
+      background: rgba(239, 68, 68, 0.1);
+    }
+    .cal-task-pill.completed {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+    .cal-task-title-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    @media(max-width: 768px) {
+      .calendar-days-matrix {
+        gap: 4px;
+      }
+      .cal-day-cell {
+        min-height: 80px;
+        padding: 4px;
+      }
+      .cal-title { font-size: 1.15rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="/dashboard.html" class="brand-logo">
+          <div class="brand-icon"><i class="fa-solid fa-bolt"></i></div>
+          <span>TaskFlow</span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-title">Menu</span>
+        <a href="/dashboard.html" class="nav-link">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="/tasks.html" class="nav-link">
+          <i class="fa-solid fa-list-check"></i>
+          <span>Tasks & Kanban</span>
+        </a>
+        <a href="/calendar.html" class="nav-link active">
+          <i class="fa-regular fa-calendar"></i>
+          <span>Calendar</span>
+        </a>
+        <a href="/profile.html" class="nav-link">
+          <i class="fa-solid fa-user-gear"></i>
+          <span>User Profile</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-mini-card" onclick="window.location.href='/profile.html'">
+          <div class="user-avatar">U</div>
+          <div class="user-info">
+            <span class="user-name">Loading...</span>
+            <span class="user-email">user@taskflow.com</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <div class="main-wrapper">
+      
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn mobile-menu-toggle" id="btn-mobile-menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-input" placeholder="Search tasks..." onkeydown="if(event.key==='Enter') window.location.href='/tasks.html?search='+encodeURIComponent(this.value);" />
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <a href="/tasks.html" class="btn-primary">
+            <i class="fa-solid fa-plus"></i>
+            <span>New Task</span>
+          </a>
+
+          <button class="icon-btn" id="btn-theme-toggle" title="Toggle Theme">
+            <i class="fa-solid fa-moon"></i>
+          </button>
+
+          <div style="position: relative;">
+            <button class="icon-btn" id="btn-notifications-bell" title="Notifications">
+              <i class="fa-regular fa-bell"></i>
+              <span class="badge-dot" id="notif-badge-dot" style="display: none;"></span>
+            </button>
+
+            <div class="notification-dropdown" id="notification-dropdown">
+              <div class="notification-header">
+                <div>
+                  <h4 style="font-size: 0.95rem; margin-bottom: 2px;">Notifications</h4>
+                  <span id="notif-unread-count" style="font-size: 0.75rem; color: var(--text-dim);">0 new</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn-secondary" id="btn-mark-all-read" style="padding: 4px 8px; font-size: 0.72rem;">Mark All</button>
+                  <button class="btn-secondary" id="btn-clear-all-notifs" style="padding: 4px 8px; font-size: 0.72rem;">Clear</button>
+                </div>
+              </div>
+              <div class="notification-list" id="notification-list"></div>
+            </div>
+          </div>
+
+          <div style="position: relative;">
+            <div class="user-avatar" id="btn-user-menu" style="cursor: pointer; width: 38px; height: 38px;">U</div>
+            <div class="profile-dropdown" id="profile-dropdown">
+              <a href="/profile.html" class="dropdown-item">
+                <i class="fa-regular fa-user"></i> My Profile
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="#" class="dropdown-item" id="btn-logout" style="color: #ef4444;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Calendar Body -->
+      <main class="content-body">
+        
+        <div class="card calendar-card">
+          <!-- Calendar Toolbar -->
+          <div class="calendar-toolbar">
+            <div class="cal-nav-group">
+              <h2 class="cal-title" id="cal-month-year-title">October 2026</h2>
+              <button class="icon-btn" id="btn-cal-prev"><i class="fa-solid fa-chevron-left"></i></button>
+              <button class="btn-secondary" id="btn-cal-today" style="padding: 8px 14px; font-size: 0.84rem;">Today</button>
+              <button class="icon-btn" id="btn-cal-next"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+
+            <div style="display: flex; background: var(--bg-input); padding: 4px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+              <button class="view-btn active" id="btn-cal-month-view">Month</button>
+              <button class="view-btn" id="btn-cal-week-view">Week</button>
+            </div>
+          </div>
+
+          <!-- Calendar Matrix Output -->
+          <div id="calendar-grid">
+            <div class="empty-state">
+              <div class="loading-spinner"></div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/calendar.js"></script>
+</body>
+</html>

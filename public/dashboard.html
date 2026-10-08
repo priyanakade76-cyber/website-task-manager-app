@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | TaskFlow</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="/dashboard.html" class="brand-logo">
+          <div class="brand-icon"><i class="fa-solid fa-bolt"></i></div>
+          <span>TaskFlow</span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-title">Menu</span>
+        <a href="/dashboard.html" class="nav-link active">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="/tasks.html" class="nav-link">
+          <i class="fa-solid fa-list-check"></i>
+          <span>Tasks & Kanban</span>
+        </a>
+        <a href="/calendar.html" class="nav-link">
+          <i class="fa-regular fa-calendar"></i>
+          <span>Calendar</span>
+        </a>
+        <a href="/profile.html" class="nav-link">
+          <i class="fa-solid fa-user-gear"></i>
+          <span>User Profile</span>
+        </a>
+
+        <span class="nav-section-title" style="margin-top: 14px;">Productivity</span>
+        <a href="/tasks.html?status=Todo" class="nav-link">
+          <i class="fa-solid fa-hourglass-start"></i>
+          <span>Pending Tasks</span>
+        </a>
+        <a href="/tasks.html?dueDateFilter=overdue" class="nav-link">
+          <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
+          <span>Overdue</span>
+        </a>
+        <a href="/tasks.html?isArchived=true" class="nav-link">
+          <i class="fa-solid fa-box-archive"></i>
+          <span>Archived Tasks</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-mini-card" onclick="window.location.href='/profile.html'">
+          <div class="user-avatar">U</div>
+          <div class="user-info">
+            <span class="user-name">Loading...</span>
+            <span class="user-email">user@taskflow.com</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <div class="main-wrapper">
+      
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn mobile-menu-toggle" id="btn-mobile-menu" aria-label="Toggle navigation">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-input" id="topbar-search-input" placeholder="Search tasks, tags, projects..." onkeydown="if(event.key==='Enter') window.location.href='/tasks.html?search='+encodeURIComponent(this.value);" />
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Quick Add Task Button -->
+          <button class="btn-primary btn-open-quick-task">
+            <i class="fa-solid fa-plus"></i>
+            <span>New Task</span>
+          </button>
+
+          <!-- Theme Toggle -->
+          <button class="icon-btn" id="btn-theme-toggle" title="Toggle Theme">
+            <i class="fa-solid fa-moon"></i>
+          </button>
+
+          <!-- Notifications Bell -->
+          <div style="position: relative;">
+            <button class="icon-btn" id="btn-notifications-bell" title="Notifications">
+              <i class="fa-regular fa-bell"></i>
+              <span class="badge-dot" id="notif-badge-dot" style="display: none;"></span>
+            </button>
+
+            <!-- Notifications Dropdown Panel -->
+            <div class="notification-dropdown" id="notification-dropdown">
+              <div class="notification-header">
+                <div>
+                  <h4 style="font-size: 0.95rem; margin-bottom: 2px;">Notifications</h4>
+                  <span id="notif-unread-count" style="font-size: 0.75rem; color: var(--text-dim);">0 new</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn-secondary" id="btn-mark-all-read" style="padding: 4px 8px; font-size: 0.72rem;">Mark All</button>
+                  <button class="btn-secondary" id="btn-clear-all-notifs" style="padding: 4px 8px; font-size: 0.72rem;">Clear</button>
+                </div>
+              </div>
+              <div class="notification-list" id="notification-list">
+                <div class="empty-state" style="padding: 30px 10px;">
+                  <i class="fa-regular fa-bell empty-icon" style="font-size: 2rem;"></i>
+                  <p class="empty-desc" style="font-size: 0.8rem; margin: 0;">No notifications yet</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- User Menu Dropdown -->
+          <div style="position: relative;">
+            <div class="user-avatar" id="btn-user-menu" style="cursor: pointer; width: 38px; height: 38px;">U</div>
+            <div class="profile-dropdown" id="profile-dropdown">
+              <a href="/profile.html" class="dropdown-item">
+                <i class="fa-regular fa-user"></i> My Profile
+              </a>
+              <a href="/profile.html" class="dropdown-item">
+                <i class="fa-solid fa-sliders"></i> Preferences
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="#" class="dropdown-item" id="btn-logout" style="color: #ef4444;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Content Body -->
+      <main class="content-body">
+        
+        <!-- Welcome Productivity Banner -->
+        <div class="welcome-banner">
+          <div class="welcome-text">
+            <h1>Productivity Dashboard</h1>
+            <p>Welcome back! Here is a live overview of your projects and task performance.</p>
+          </div>
+          <div class="productivity-chip">
+            <i class="fa-solid fa-trophy" style="color: #f59e0b;"></i>
+            <span id="productivity-summary-text">Loading your weekly summary...</span>
+          </div>
+        </div>
+
+        <!-- 8 Core Metrics Cards Grid -->
+        <section class="stats-grid">
+          <!-- Total Tasks -->
+          <div class="card stat-card">
+            <div class="stat-card-top">
+              <span class="stat-card-label">Total Tasks</span>
+              <div class="stat-icon total"><i class="fa-solid fa-list-check"></i></div>
+            </div>
+            <div class="stat-card-value" id="stat-total-tasks">0</div>
+          </div>
+
+          <!-- Completed Tasks -->
+          <div class="card stat-card">
+            <div class="stat-card-top">
+              <span class="stat-card-label">Completed</span>
+              <div class="stat-icon completed"><i class="fa-solid fa-circle-check"></i></div>
+            </div>
+            <div class="stat-card-value" id="stat-completed-tasks">0</div>
+          </div>
+
+          <!-- Pending Tasks -->
+          <div class="card stat-card">
+            <div class="stat-card-top">
+              <span class="stat-card-label">Pending</span>
+              <div class="stat-icon pending"><i class="fa-solid fa-hourglass-half"></i></div>
+            </div>
+            <div class="stat-card-value" id="stat-pending-tasks">0</div>
+          </div>
+
+          <!-- In Progress Tasks -->
+          <div class="card stat-card">
+            <div class="stat-card-top">
+              <span class="stat-card-label">In Progress</span>
+              <div class="stat-icon progress"><i class="fa-solid fa-spinner"></i></div>
+            </div>
+            <div class="stat-card-value" id="stat-inprogress-tasks">0</div>
+          </div>
+
+          <!-- Overdue Tasks -->
+          <div class="card stat-card">
+            <div class="stat-card-top">
+              <span class="stat-card-label">Overdue</span>
+              <div class="stat-icon overdue"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            </div>
+            <div class="stat-card-value" id="stat-overdue-tasks" style="color: #ef4444;">0</div>
+          </div>
+
+          <!-- Due Today -->
+          <div class="card stat-card">
+            <div class="stat-card-top">
+              <span class="stat-card-label">Due Today</span>
+              <div class="stat-icon today"><i class="fa-regular fa-calendar-day"></i></div>
+            </div>
+            <div class="stat-card-value" id="stat-today-tasks">0</div>
+          </div>
+
+          <!-- High / Urgent Priority -->
+          <div class="card stat-card">
+            <div class="stat-card-top">
+              <span class="stat-card-label">High Priority</span>
+              <div class="stat-icon overdue"><i class="fa-solid fa-fire"></i></div>
+            </div>
+            <div class="stat-card-value" id="stat-high-priority-tasks">0</div>
+          </div>
+
+          <!-- Completion Percentage -->
+          <div class="card stat-card">
+            <div class="stat-card-top">
+              <span class="stat-card-label">Completion Rate</span>
+              <div class="stat-icon rate"><i class="fa-solid fa-percent"></i></div>
+            </div>
+            <div class="stat-card-value" id="stat-completion-rate">0%</div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" id="stat-progress-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Charts Layout (Row 1: Daily & Weekly) -->
+        <section class="charts-grid-main">
+          <!-- Daily Completion Chart -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <div class="chart-title">
+                <i class="fa-solid fa-chart-line" style="color: #6366f1;"></i>
+                Tasks Completed Per Day (Last 7 Days)
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-daily-completed"></canvas>
+            </div>
+          </div>
+
+          <!-- Weekly Completion Chart -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <div class="chart-title">
+                <i class="fa-solid fa-chart-column" style="color: #06b6d4;"></i>
+                Tasks Completed Per Week
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-weekly-completed"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- Charts Layout (Row 2: Priority, Categories, Status) -->
+        <section class="charts-grid-secondary">
+          <!-- Tasks by Priority -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <div class="chart-title">
+                <i class="fa-solid fa-layer-group" style="color: #f59e0b;"></i>
+                Tasks By Priority
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-by-priority"></canvas>
+            </div>
+          </div>
+
+          <!-- Tasks by Category -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <div class="chart-title">
+                <i class="fa-solid fa-tags" style="color: #a855f7;"></i>
+                Tasks By Category
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-by-category"></canvas>
+            </div>
+          </div>
+
+          <!-- Status Distribution -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <div class="chart-title">
+                <i class="fa-solid fa-chart-pie" style="color: #10b981;"></i>
+                Status Distribution
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="chart-status-distribution"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- Dashboard Bottom: Pomodoro Widget & Upcoming Tasks -->
+        <section class="dashboard-split">
+          <!-- Pomodoro Timer Widget -->
+          <div class="card pomodoro-card">
+            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 14px;">
+              <i class="fa-solid fa-stopwatch" style="color: var(--primary);"></i> Pomodoro Focus Timer
+            </div>
+
+            <div class="pomo-tabs">
+              <button class="pomo-tab active" data-mode="work">Focus (25m)</button>
+              <button class="pomo-tab" data-mode="shortBreak">Short Break (5m)</button>
+              <button class="pomo-tab" data-mode="longBreak">Long Break (15m)</button>
+            </div>
+
+            <div class="pomo-timer-display" id="pomo-timer-display">25:00</div>
+
+            <!-- Link Task to Session -->
+            <select class="form-select pomo-select-task" id="pomo-task-select">
+              <option value="">No task linked</option>
+            </select>
+
+            <div class="pomo-controls">
+              <button class="btn-primary" id="btn-pomo-toggle">
+                <i class="fa-solid fa-play"></i> Start
+              </button>
+              <button class="btn-secondary" id="btn-pomo-reset">
+                <i class="fa-solid fa-rotate-left"></i> Reset
+              </button>
+            </div>
+
+            <div class="pomo-stats">
+              Sessions Completed: <span id="pomo-completed-count" style="font-weight: 700; color: var(--primary);">0</span>
+            </div>
+          </div>
+
+          <!-- Upcoming Tasks Widget -->
+          <div class="card chart-card">
+            <div class="chart-header">
+              <div class="chart-title">
+                <i class="fa-regular fa-calendar-check" style="color: #06b6d4;"></i>
+                Upcoming Deadlines
+              </div>
+              <a href="/tasks.html" class="btn-secondary" style="padding: 6px 12px; font-size: 0.78rem;">View All</a>
+            </div>
+            <div class="upcoming-tasks-list" id="upcoming-tasks-list">
+              <div class="empty-state" style="padding: 24px 10px;">
+                <i class="fa-regular fa-calendar-check empty-icon" style="font-size: 2rem;"></i>
+                <p class="empty-desc" style="font-size: 0.85rem; margin: 0;">Loading upcoming tasks...</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Quick Add Task Modal -->
+  <div class="modal-overlay" id="modal-quick-task">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Quick Add Task</h3>
+        <button class="modal-close" id="btn-close-quick-modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="form-quick-task">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="quick-task-title">Task Title *</label>
+            <input type="text" id="quick-task-title" class="form-input" placeholder="What needs to get done?" required />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="form-group">
+              <label class="form-label" for="quick-task-priority">Priority</label>
+              <select id="quick-task-priority" class="form-select">
+                <option value="Low">Low</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="High">High</option>
+                <option value="Urgent">Urgent</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="quick-task-category">Category</label>
+              <select id="quick-task-category" class="form-select">
+                <option value="">General</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="quick-task-date">Due Date</label>
+            <input type="date" id="quick-task-date" class="form-input" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn-primary"><i class="fa-solid fa-plus"></i> Create Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

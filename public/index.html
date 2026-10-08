@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskFlow | Modern Task & Productivity Platform</title>
+  <meta name="description" content="Supercharge your productivity with TaskFlow. Modern task management, Kanban boards, Pomodoro timer, and deep analytics.">
+  
+  <!-- Font Awesome & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+
+  <style>
+    .landing-hero {
+      min-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 24px;
+      position: relative;
+      background: radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 60%);
+    }
+    .landing-nav {
+      height: 80px;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+    }
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: var(--radius-full);
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      max-width: 850px;
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+    }
+    .hero-title span {
+      background: linear-gradient(135deg, #6366f1, #a855f7, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 620px;
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 60px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+      max-width: 1200px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+    }
+    .feature-card {
+      padding: 32px 28px;
+      text-align: left;
+    }
+    .feature-icon-box {
+      width: 50px;
+      height: 50px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      margin-bottom: 20px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    @media(max-width: 768px) {
+      .hero-title { font-size: 2.4rem; }
+      .landing-nav { padding: 0 20px; }
+      .hero-ctas { flex-direction: column; width: 100%; max-width: 300px; }
+      .hero-ctas .btn-primary, .hero-ctas .btn-secondary { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Landing Nav -->
+  <header class="landing-nav">
+    <div class="brand-logo">
+      <div class="brand-icon"><i class="fa-solid fa-bolt"></i></div>
+      <span>TaskFlow</span>
+      <span class="brand-badge">SaaS</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <button class="icon-btn" id="btn-theme-toggle" title="Toggle Theme">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+      <a href="/login.html" class="btn-secondary" id="nav-btn-login">Sign In</a>
+      <a href="/register.html" class="btn-primary" id="nav-btn-register">Get Started Free</a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main>
+    <section class="landing-hero">
+      <div class="hero-pill">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> All-in-One Productivity Workspace
+      </div>
+      <h1 class="hero-title">Organize effortlessly. <span>Execute fearlessly.</span></h1>
+      <p class="hero-subtitle">
+        Elevate your workflow with intuitive task management, drag-and-drop Kanban boards, integrated Pomodoro timers, and data-driven productivity metrics.
+      </p>
+      <div class="hero-ctas">
+        <a href="/register.html" class="btn-primary" style="padding: 14px 28px; font-size: 1rem;">
+          <i class="fa-solid fa-arrow-right"></i> Launch Your Workspace
+        </a>
+        <a href="/login.html" class="btn-secondary" style="padding: 14px 24px; font-size: 1rem;">
+          <i class="fa-solid fa-user-check"></i> Try Demo Account
+        </a>
+      </div>
+    </section>
+
+    <!-- Key Features Showcase -->
+    <section class="features-grid">
+      <div class="card feature-card">
+        <div class="feature-icon-box" style="background: rgba(99,102,241,0.15); color: #6366f1;">
+          <i class="fa-solid fa-table-columns"></i>
+        </div>
+        <h3 style="margin-bottom: 8px;">Interactive Kanban</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+          Drag and drop tasks fluidly between Todo, In Progress, and Completed columns with automatic database sync.
+        </p>
+      </div>
+
+      <div class="card feature-card">
+        <div class="feature-icon-box" style="background: rgba(16,185,129,0.15); color: #10b981;">
+          <i class="fa-solid fa-chart-pie"></i>
+        </div>
+        <h3 style="margin-bottom: 8px;">Productivity Analytics</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+          Visual Chart.js reports showing daily completions, weekly trends, priority splits, and category distribution.
+        </p>
+      </div>
+
+      <div class="card feature-card">
+        <div class="feature-icon-box" style="background: rgba(239,68,68,0.15); color: #ef4444;">
+          <i class="fa-solid fa-stopwatch-20"></i>
+        </div>
+        <h3 style="margin-bottom: 8px;">Pomodoro & Time Tracking</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+          Built-in 25-minute Pomodoro timer, audio chimes, and live task stopwatches to measure actual hours invested.
+        </p>
+      </div>
+
+      <div class="card feature-card">
+        <div class="feature-icon-box" style="background: rgba(245,158,11,0.15); color: #f59e0b;">
+          <i class="fa-solid fa-calendar-days"></i>
+        </div>
+        <h3 style="margin-bottom: 8px;">Calendar & Reminders</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+          Interactive month & week views, overdue alerts, and proactive notifications before tasks are due.
+        </p>
+      </div>
+
+      <div class="card feature-card">
+        <div class="feature-icon-box" style="background: rgba(6,182,212,0.15); color: #06b6d4;">
+          <i class="fa-solid fa-arrows-rotate"></i>
+        </div>
+        <h3 style="margin-bottom: 8px;">Recurring Tasks Engine</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+          Daily, weekly, or custom intervals that automatically schedule their next occurrence upon completion.
+        </p>
+      </div>
+
+      <div class="card feature-card">
+        <div class="feature-icon-box" style="background: rgba(168,85,247,0.15); color: #a855f7;">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <h3 style="margin-bottom: 8px;">Enterprise Security</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+          JWT authentication, bcrypt password hashing, data isolation per user, and rate-limiting protection.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer style="text-align: center; padding: 40px; border-top: 1px solid var(--border-subtle); color: var(--text-dim); font-size: 0.85rem;">
+    <p>&copy; 2026 TaskFlow. Crafted with HTML5, Vanilla CSS & Modern JavaScript.</p>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    // If logged in, redirect directly to dashboard
+    if (API.isAuthenticated()) {
+      const loginBtn = document.getElementById('nav-btn-login');
+      const regBtn = document.getElementById('nav-btn-register');
+      if (loginBtn) {
+        loginBtn.textContent = 'Dashboard';
+        loginBtn.href = '/dashboard.html';
+      }
+      if (regBtn) {
+        regBtn.textContent = 'Open App';
+        regBtn.href = '/dashboard.html';
+      }
+    }
+  </script>
+</body>
+</html>

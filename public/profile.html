@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile & Settings | TaskFlow</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+
+  <style>
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 24px;
+    }
+    .profile-card {
+      padding: 28px;
+    }
+    .profile-avatar-large {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      border: 3px solid var(--border-subtle);
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+      overflow: hidden;
+    }
+    .avatar-preset-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 0.9rem;
+      transition: all var(--transition-fast);
+    }
+    .avatar-preset-btn.selected {
+      border-color: #fff;
+      transform: scale(1.15);
+      box-shadow: 0 0 10px var(--primary);
+    }
+    @media(max-width: 900px) {
+      .profile-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="/dashboard.html" class="brand-logo">
+          <div class="brand-icon"><i class="fa-solid fa-bolt"></i></div>
+          <span>TaskFlow</span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-title">Menu</span>
+        <a href="/dashboard.html" class="nav-link">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="/tasks.html" class="nav-link">
+          <i class="fa-solid fa-list-check"></i>
+          <span>Tasks & Kanban</span>
+        </a>
+        <a href="/calendar.html" class="nav-link">
+          <i class="fa-regular fa-calendar"></i>
+          <span>Calendar</span>
+        </a>
+        <a href="/profile.html" class="nav-link active">
+          <i class="fa-solid fa-user-gear"></i>
+          <span>User Profile</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-mini-card">
+          <div class="user-avatar">U</div>
+          <div class="user-info">
+            <span class="user-name">Loading...</span>
+            <span class="user-email">user@taskflow.com</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <div class="main-wrapper">
+      
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn mobile-menu-toggle" id="btn-mobile-menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <h2 style="font-size: 1.15rem; font-weight: 700;">Account Settings</h2>
+        </div>
+
+        <div class="topbar-right">
+          <button class="icon-btn" id="btn-theme-toggle" title="Toggle Theme">
+            <i class="fa-solid fa-moon"></i>
+          </button>
+
+          <div style="position: relative;">
+            <button class="icon-btn" id="btn-notifications-bell" title="Notifications">
+              <i class="fa-regular fa-bell"></i>
+              <span class="badge-dot" id="notif-badge-dot" style="display: none;"></span>
+            </button>
+
+            <div class="notification-dropdown" id="notification-dropdown">
+              <div class="notification-header">
+                <div>
+                  <h4 style="font-size: 0.95rem; margin-bottom: 2px;">Notifications</h4>
+                  <span id="notif-unread-count" style="font-size: 0.75rem; color: var(--text-dim);">0 new</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn-secondary" id="btn-mark-all-read" style="padding: 4px 8px; font-size: 0.72rem;">Mark All</button>
+                  <button class="btn-secondary" id="btn-clear-all-notifs" style="padding: 4px 8px; font-size: 0.72rem;">Clear</button>
+                </div>
+              </div>
+              <div class="notification-list" id="notification-list"></div>
+            </div>
+          </div>
+
+          <div style="position: relative;">
+            <div class="user-avatar" id="btn-user-menu" style="cursor: pointer; width: 38px; height: 38px;">U</div>
+            <div class="profile-dropdown" id="profile-dropdown">
+              <a href="/profile.html" class="dropdown-item">
+                <i class="fa-regular fa-user"></i> My Profile
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="#" class="dropdown-item" id="btn-logout" style="color: #ef4444;">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Profile Content Body -->
+      <main class="content-body">
+        
+        <div class="profile-grid">
+          
+          <!-- Left: User Summary Card -->
+          <div class="card profile-card" style="text-align: center;">
+            <div class="profile-avatar-large" id="profile-avatar-display">U</div>
+            <h3 class="user-name" style="font-size: 1.25rem; margin-bottom: 4px;">User Name</h3>
+            <p class="user-email" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">user@example.com</p>
+            <span class="badge" style="background: var(--primary-light); color: var(--primary); font-size: 0.78rem;">Verified Member</span>
+
+            <div style="border-top: 1px solid var(--border-subtle); margin-top: 24px; padding-top: 20px; text-align: left;">
+              <div style="margin-bottom: 12px;">
+                <span style="font-size: 0.75rem; color: var(--text-dim); display: block;">Member Since</span>
+                <span id="profile-member-since" style="font-size: 0.88rem; font-weight: 600;">October 2026</span>
+              </div>
+              <div>
+                <span style="font-size: 0.75rem; color: var(--text-dim); display: block;">Authentication Mode</span>
+                <span style="font-size: 0.88rem; font-weight: 600; color: var(--accent-emerald);">JWT + Bcrypt (Active)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Profile & Security Edit Forms -->
+          <div style="display: flex; flex-direction: column; gap: 24px;">
+            
+            <!-- Profile Details Form -->
+            <div class="card profile-card">
+              <h3 style="font-size: 1.15rem; margin-bottom: 20px;">
+                <i class="fa-regular fa-user" style="color: var(--primary);"></i> Personal Information
+              </h3>
+
+              <form id="form-update-profile">
+                <div class="form-group">
+                  <label class="form-label" for="profile-input-name">Full Name</label>
+                  <input type="text" id="profile-input-name" class="form-input" required />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="profile-input-email">Email Address</label>
+                  <input type="email" id="profile-input-email" class="form-input" required />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Avatar Preset Theme</label>
+                  <div style="display: flex; gap: 10px; margin-top: 6px;">
+                    <div class="avatar-preset-btn" data-avatar-url="" style="background: linear-gradient(135deg, #6366f1, #a855f7);">
+                      <i class="fa-solid fa-user-astronaut"></i>
+                    </div>
+                    <div class="avatar-preset-btn" data-avatar-url="" style="background: linear-gradient(135deg, #06b6d4, #3b82f6);">
+                      <i class="fa-solid fa-rocket"></i>
+                    </div>
+                    <div class="avatar-preset-btn" data-avatar-url="" style="background: linear-gradient(135deg, #10b981, #059669);">
+                      <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <div class="avatar-preset-btn" data-avatar-url="" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">
+                      <i class="fa-solid fa-fire"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="profile-select-theme">Default Theme</label>
+                  <select id="profile-select-theme" class="form-select">
+                    <option value="dark">Dark Theme (Default)</option>
+                    <option value="light">Light Theme</option>
+                  </select>
+                </div>
+
+                <div style="margin-top: 18px; padding: 14px; background: var(--bg-input); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                  <label class="form-label" style="margin-bottom: 10px;">Notification Preferences</label>
+                  <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer;">
+                      <input type="checkbox" id="setting-browser-alerts" checked />
+                      <span>In-app & Browser Alerts for Due Reminders</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer;">
+                      <input type="checkbox" id="setting-email-alerts" checked />
+                      <span>Daily Digest Notifications</span>
+                    </label>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="margin-top: 20px;">
+                  <i class="fa-solid fa-check"></i> Save Profile
+                </button>
+              </form>
+            </div>
+
+            <!-- Password Change Form -->
+            <div class="card profile-card">
+              <h3 style="font-size: 1.15rem; margin-bottom: 20px;">
+                <i class="fa-solid fa-key" style="color: #f59e0b;"></i> Change Password
+              </h3>
+
+              <form id="form-change-password">
+                <div class="form-group">
+                  <label class="form-label" for="pwd-current">Current Password</label>
+                  <input type="password" id="pwd-current" class="form-input" placeholder="••••••••" required />
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                  <div class="form-group">
+                    <label class="form-label" for="pwd-new">New Password</label>
+                    <input type="password" id="pwd-new" class="form-input" placeholder="••••••••" required minlength="6" />
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="pwd-confirm">Confirm New Password</label>
+                    <input type="password" id="pwd-confirm" class="form-input" placeholder="••••••••" required minlength="6" />
+                  </div>
+                </div>
+
+                <button type="submit" class="btn-secondary" style="margin-top: 10px;">
+                  <i class="fa-solid fa-shield-halved"></i> Update Password
+                </button>
+              </form>
+            </div>
+
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/profile.js"></script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account | TaskFlow</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+
+  <style>
+    .auth-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: radial-gradient(circle at 50% 30%, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+    }
+    .auth-card {
+      width: 100%;
+      max-width: 480px;
+      padding: 38px 34px;
+    }
+    .auth-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .auth-header h1 {
+      font-size: 1.75rem;
+      margin-top: 14px;
+      margin-bottom: 6px;
+    }
+    .avatar-presets-grid {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .avatar-preset-item {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: #fff;
+    }
+    .avatar-preset-item.selected {
+      border-color: #fff;
+      box-shadow: 0 0 10px var(--primary);
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-wrapper">
+    <div class="card auth-card">
+      <div class="auth-header">
+        <a href="/" class="brand-logo" style="justify-content: center;">
+          <div class="brand-icon"><i class="fa-solid fa-bolt"></i></div>
+          <span>TaskFlow</span>
+        </a>
+        <h1>Create Your Account</h1>
+        <p style="color: var(--text-muted); font-size: 0.88rem;">Start organizing your tasks with peak clarity</p>
+      </div>
+
+      <!-- Error Alert -->
+      <div id="reg-error-alert" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 12px; border-radius: var(--radius-md); font-size: 0.85rem; margin-bottom: 20px;">
+        <i class="fa-solid fa-circle-exclamation"></i> <span id="reg-error-msg"></span>
+      </div>
+
+      <form id="form-register">
+        <div class="form-group">
+          <label class="form-label" for="reg-name">Full Name</label>
+          <input type="text" id="reg-name" class="form-input" placeholder="e.g. Sarah Connor" required autocomplete="name" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Email Address</label>
+          <input type="email" id="reg-email" class="form-input" placeholder="name@example.com" required autocomplete="email" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-password">Password (min 6 characters)</label>
+          <input type="password" id="reg-password" class="form-input" placeholder="••••••••" required minlength="6" autocomplete="new-password" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Pick Profile Avatar Theme</label>
+          <div class="avatar-presets-grid">
+            <div class="avatar-preset-item selected" data-gradient="linear-gradient(135deg, #6366f1, #a855f7)" style="background: linear-gradient(135deg, #6366f1, #a855f7);">
+              <i class="fa-solid fa-user-astronaut"></i>
+            </div>
+            <div class="avatar-preset-item" data-gradient="linear-gradient(135deg, #06b6d4, #3b82f6)" style="background: linear-gradient(135deg, #06b6d4, #3b82f6);">
+              <i class="fa-solid fa-rocket"></i>
+            </div>
+            <div class="avatar-preset-item" data-gradient="linear-gradient(135deg, #10b981, #059669)" style="background: linear-gradient(135deg, #10b981, #059669);">
+              <i class="fa-solid fa-seedling"></i>
+            </div>
+            <div class="avatar-preset-item" data-gradient="linear-gradient(135deg, #f59e0b, #ef4444)" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">
+              <i class="fa-solid fa-fire"></i>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 0.95rem; margin-top: 10px;">
+          <i class="fa-solid fa-user-plus"></i> Create Account
+        </button>
+      </form>
+
+      <div style="text-align: center; margin-top: 24px; font-size: 0.85rem; color: var(--text-muted);">
+        Already have an account? <a href="/login.html" style="color: var(--primary); font-weight: 600;">Sign in</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    const form = document.getElementById('form-register');
+    const nameInput = document.getElementById('reg-name');
+    const emailInput = document.getElementById('reg-email');
+    const pwdInput = document.getElementById('reg-password');
+    const errorAlert = document.getElementById('reg-error-alert');
+    const errorMsg = document.getElementById('reg-error-msg');
+    const avatarItems = document.querySelectorAll('.avatar-preset-item');
+
+    let selectedGradient = 'linear-gradient(135deg, #6366f1, #a855f7)';
+
+    avatarItems.forEach((item) => {
+      item.addEventListener('click', () => {
+        avatarItems.forEach((i) => i.classList.remove('selected'));
+        item.classList.add('selected');
+        selectedGradient = item.dataset.gradient;
+      });
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorAlert.style.display = 'none';
+
+      if (pwdInput.value.length < 6) {
+        errorMsg.textContent = 'Password must be at least 6 characters.';
+        errorAlert.style.display = 'block';
+        return;
+      }
+
+      try {
+        await API.auth.register(nameInput.value.trim(), emailInput.value.trim(), pwdInput.value);
+        showToast('Registered', 'Your account is ready!', 'success');
+        window.location.href = '/dashboard.html';
+      } catch (err) {
+        errorMsg.textContent = err.message;
+        errorAlert.style.display = 'block';
+        showToast('Registration Error', err.message, 'error');
+      }
+    });
+  </script>
+</body>
+</html>
